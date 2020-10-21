@@ -2,15 +2,20 @@ package uploadserver
 
 import (
 	"fmt"
+	"github.com/sethpyle376/cs-statman/matchprocessor"
 	"io/ioutil"
 	"net/http"
 )
 
-type UploadServer struct{}
+type UploadServer struct {
+	mp *matchprocessor.MatchProcessor
+}
 
 func New() (*UploadServer, error) {
 	us := &UploadServer{}
-	return us, nil
+	mp, err := matchprocessor.New()
+	us.mp = mp
+	return us, err
 }
 
 func (us *UploadServer) handleUpload(w http.ResponseWriter, r *http.Request) {
@@ -30,7 +35,7 @@ func (us *UploadServer) handleUpload(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Fprintf(w, "File size: %d\n", handler.Size)
 
-	tempfile, err := ioutil.TempFile("temp", "upload-*.png")
+	tempfile, err := ioutil.TempFile("temp", "upload-*.dem")
 
 	if err != nil {
 		fmt.Fprintf(w, "error getting temp file\n")
@@ -48,6 +53,9 @@ func (us *UploadServer) handleUpload(w http.ResponseWriter, r *http.Request) {
 
 	tempfile.Write(filebytes)
 	fmt.Fprintf(w, "successfully uploaded file\n")
+
+	message := us.mp.ProcessMatch(tempfile)
+	fmt.Fprintf(w, message)
 }
 
 func (us *UploadServer) Start() {
