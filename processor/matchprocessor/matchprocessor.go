@@ -3,15 +3,22 @@ package matchprocessor
 import (
 	dem "github.com/markus-wa/demoinfocs-golang/v2/pkg/demoinfocs"
 	events "github.com/markus-wa/demoinfocs-golang/v2/pkg/demoinfocs/events"
+	"github.com/sethpyle376/cs-statman/csproto"
+	"google.golang.org/grpc"
 	"os"
 	"strconv"
 )
 
-type MatchProcessor struct{}
+type MatchProcessor struct {
+	conn *grpc.ClientConn
+}
 
 func New() (*MatchProcessor, error) {
 	mp := &MatchProcessor{}
-	return mp, nil
+	var opts []grpc.DialOption
+	conn, err := grpc.Dial("localhost:4000", opts...)
+	mp.conn = conn
+	return mp, err
 }
 
 func (mp *MatchProcessor) ProcessMatch(file *os.File) string {
@@ -63,6 +70,8 @@ func (mp *MatchProcessor) ProcessMatch(file *os.File) string {
 	if err != nil {
 		panic(err)
 	}
+
+	mp.conn.Se
 
 	defer file.Close()
 	defer os.Remove(file.Name())

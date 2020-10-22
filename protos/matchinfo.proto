@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package statman;
+option go_package = "csproto";
+
+message PlayerData {
+    string name = 1;
+    string steamID = 2;
+}
+
+message RoundData {
+    int32 winningTeam = 1;
+}
+
+message MatchData {
+    string map = 1;
+}
+
+message MatchInfo {
+    MatchData matchData = 1;
+    repeated RoundData roundData = 2;
+    repeated PlayerData playerData = 3;
+}
+
+message SaveMatchRequest {
+    MatchInfo matchInfo = 1;
+}
+
+message SaveMatchResponse {
+
+}
+
+service Statman {
+    rpc SaveMatch(SaveMatchRequest) returns(SaveMatchResponse){};
+}
