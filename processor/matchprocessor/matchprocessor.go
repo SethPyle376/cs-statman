@@ -1,23 +1,25 @@
 package matchprocessor
 
 import (
+	"context"
 	dem "github.com/markus-wa/demoinfocs-golang/v2/pkg/demoinfocs"
 	events "github.com/markus-wa/demoinfocs-golang/v2/pkg/demoinfocs/events"
-	"github.com/sethpyle376/cs-statman/csproto"
+	"github.com/sethpyle376/cs-statman/pkg/csproto"
 	"google.golang.org/grpc"
 	"os"
 	"strconv"
+	"time"
 )
 
 type MatchProcessor struct {
-	conn *grpc.ClientConn
+	client csproto.StatmanClient
 }
 
 func New() (*MatchProcessor, error) {
 	mp := &MatchProcessor{}
-	var opts []grpc.DialOption
-	conn, err := grpc.Dial("localhost:4000", opts...)
-	mp.conn = conn
+	conn, err := grpc.Dial("localhost:4000", grpc.WithInsecure())
+	client := csproto.NewStatmanClient(conn)
+	mp.client = client
 	return mp, err
 }
 
@@ -67,11 +69,22 @@ func (mp *MatchProcessor) ProcessMatch(file *os.File) string {
 
 	err = parser.ParseToEnd()
 
+	testMessage := &csproto.MatchInfo{}
+	testMatchData := &csproto.MatchData{}
+	testMatchData.Map = "inferno"
+	testMessage.MatchData = testMatchData
+
+	request := &csproto.SaveMatchRequest{}
+	request.MatchInfo = testMessage
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	mp.client.SaveMatch(ctx, request)
+
 	if err != nil {
 		panic(err)
 	}
-
-	mp.conn.Se
 
 	defer file.Close()
 	defer os.Remove(file.Name())

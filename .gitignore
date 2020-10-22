@@ -1,2 +1,3 @@
 *.dem
 go.sum
+*.pb.go
