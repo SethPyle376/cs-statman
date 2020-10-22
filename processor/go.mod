@@ -1,4 +1,4 @@
-module github.com/sethpyle376/cs-statman
+module github.com/sethpyle376/cs-statman/processor
 
 go 1.15
 
