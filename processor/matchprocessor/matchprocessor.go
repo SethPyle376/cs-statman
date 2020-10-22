@@ -4,6 +4,7 @@ import (
 	dem "github.com/markus-wa/demoinfocs-golang/v2/pkg/demoinfocs"
 	events "github.com/markus-wa/demoinfocs-golang/v2/pkg/demoinfocs/events"
 	"os"
+	"strconv"
 )
 
 type MatchProcessor struct{}
@@ -18,8 +19,6 @@ func (mp *MatchProcessor) ProcessMatch(file *os.File) string {
 
 	if err != nil {
 		println("error", err)
-	} else {
-		println("good")
 	}
 
 	parser := dem.NewParser(f)
@@ -35,6 +34,28 @@ func (mp *MatchProcessor) ProcessMatch(file *os.File) string {
 			bombsite = "B"
 		}
 		message += ("Player: " + bd.Player.Name + " defused bomb at site: " + bombsite + "\n")
+	})
+
+	parser.RegisterEventHandler(func(ph events.PlayerHurt) {
+		player := ph.Player.Name
+		playerId := strconv.FormatUint(ph.Player.SteamID64, 10)
+
+		var attacker string
+
+		if ph.Attacker != nil {
+			attacker = ph.Attacker.Name
+		} else {
+			attacker = "WORLD"
+		}
+
+		weapon := ph.Weapon.Type.String()
+		damage := ph.HealthDamage
+		isLive := parser.GameState().IsMatchStarted()
+
+		if isLive {
+			message += (attacker + " damaged " + player + "(ID: " + playerId + ")" + " for " + strconv.Itoa(damage) + " with " + weapon +
+				" on round " + strconv.Itoa(parser.GameState().TotalRoundsPlayed()+1) + "\n")
+		}
 	})
 
 	err = parser.ParseToEnd()

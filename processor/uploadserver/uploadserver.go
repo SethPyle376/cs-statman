@@ -2,7 +2,7 @@ package uploadserver
 
 import (
 	"fmt"
-	"github.com/sethpyle376/cs-statman/matchprocessor"
+	"github.com/sethpyle376/cs-statman/processor/matchprocessor"
 	"io/ioutil"
 	"net/http"
 )

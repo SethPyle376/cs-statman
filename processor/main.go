@@ -3,7 +3,7 @@ package main
 import (
 	// "fmt"
 
-	"github.com/sethpyle376/cs-statman/uploadserver"
+	"github.com/sethpyle376/cs-statman/processor/uploadserver"
 	"os"
 	"os/signal"
 	"syscall"
