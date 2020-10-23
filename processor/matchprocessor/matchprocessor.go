@@ -23,31 +23,16 @@ func New() (*MatchProcessor, error) {
 	return mp, err
 }
 
-func (mp *MatchProcessor) ProcessMatch(file *os.File) string {
+func (mp *MatchProcessor) getMatchStats(file *os.File) (string, error) {
 	f, err := os.Open(file.Name())
 
-	if err != nil {
-		println("error", err)
-	}
-
 	parser := dem.NewParser(f)
-	defer parser.Close()
 
 	var message string
 
-	parser.RegisterEventHandler(func(bd events.BombDefused) {
-		var bombsite string
-		if bd.Site == events.BombsiteA {
-			bombsite = "A"
-		} else {
-			bombsite = "B"
-		}
-		message += ("Player: " + bd.Player.Name + " defused bomb at site: " + bombsite + "\n")
-	})
-
 	parser.RegisterEventHandler(func(ph events.PlayerHurt) {
 		player := ph.Player.Name
-		playerId := strconv.FormatUint(ph.Player.SteamID64, 10)
+		playerID := strconv.FormatUint(ph.Player.SteamID64, 10)
 
 		var attacker string
 
@@ -62,12 +47,22 @@ func (mp *MatchProcessor) ProcessMatch(file *os.File) string {
 		isLive := parser.GameState().IsMatchStarted()
 
 		if isLive {
-			message += (attacker + " damaged " + player + "(ID: " + playerId + ")" + " for " + strconv.Itoa(damage) + " with " + weapon +
+			message += (attacker + " damaged " + player + "(ID: " + playerID + ")" + " for " + strconv.Itoa(damage) + " with " + weapon +
 				" on round " + strconv.Itoa(parser.GameState().TotalRoundsPlayed()+1) + "\n")
 		}
 	})
 
-	err = parser.ParseToEnd()
+	parser.ParseToEnd()
+	return message, err
+}
+
+func (mp *MatchProcessor) ProcessMatch(file *os.File) string {
+	message, err := mp.getMatchStats(file)
+
+	if err != nil {
+		println(err.Error())
+		return "error\n"
+	}
 
 	testMessage := &csproto.MatchInfo{}
 	testMatchData := &csproto.MatchData{}
