@@ -5,6 +5,7 @@ import (
 	"github.com/sethpyle376/cs-statman/pkg/csproto"
 	"google.golang.org/grpc"
 	"net"
+	"strconv"
 )
 
 type GRPCServer struct {
@@ -35,7 +36,10 @@ func New(port string) (*GRPCServer, error) {
 }
 
 func (gs *GRPCServer) SaveMatch(ctx context.Context, request *csproto.SaveMatchRequest) (*csproto.SaveMatchResponse, error) {
-	println("SAVING MATCH GOT VALUE: " + request.MatchInfo.MatchData.Map)
+	for _, element := range request.MatchInfo.PlayerData {
+
+		println(element.Name + " had an adr of: " + strconv.FormatFloat(float64(element.Adr), 'f', 2, 32))
+	}
 	return &csproto.SaveMatchResponse{}, nil
 }
 

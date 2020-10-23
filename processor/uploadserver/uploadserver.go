@@ -54,8 +54,10 @@ func (us *UploadServer) handleUpload(w http.ResponseWriter, r *http.Request) {
 	tempfile.Write(filebytes)
 	fmt.Fprintf(w, "successfully uploaded file\n")
 
-	message := us.mp.ProcessMatch(tempfile)
-	fmt.Fprintf(w, message)
+	err = us.mp.ProcessMatch(tempfile)
+	if err != nil {
+		panic("error processing match")
+	}
 }
 
 func (us *UploadServer) Start() {

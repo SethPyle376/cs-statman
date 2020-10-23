@@ -23,66 +23,85 @@ func New() (*MatchProcessor, error) {
 	return mp, err
 }
 
-func (mp *MatchProcessor) getMatchStats(file *os.File) (string, error) {
+func (mp *MatchProcessor) getMatchStats(file *os.File) (*csproto.MatchInfo, error) {
+	matchInfo := &csproto.MatchInfo{}
 	f, err := os.Open(file.Name())
 
 	parser := dem.NewParser(f)
 
-	var message string
+	headers, err := parser.ParseHeader()
+
+	matchData := &csproto.MatchData{}
+	matchData.Map = headers.MapName
+
+	var playerTotalDamage map[uint64]int
+	playerTotalDamage = make(map[uint64]int)
+
+	var playerNames map[uint64]string
+	playerNames = make(map[uint64]string)
 
 	parser.RegisterEventHandler(func(ph events.PlayerHurt) {
-		player := ph.Player.Name
-		playerID := strconv.FormatUint(ph.Player.SteamID64, 10)
+		if parser.GameState().IsMatchStarted() && ph.Attacker != nil {
+			if ph.Attacker != ph.Player {
+				if ph.Attacker.Team != ph.Player.Team {
+					var actualDamage int
 
-		var attacker string
+					if ph.Player.Health() < ph.HealthDamage {
+						actualDamage = ph.Player.Health()
+					} else {
+						actualDamage = ph.HealthDamage
+					}
 
-		if ph.Attacker != nil {
-			attacker = ph.Attacker.Name
-		} else {
-			attacker = "WORLD"
-		}
-
-		weapon := ph.Weapon.Type.String()
-		damage := ph.HealthDamage
-		isLive := parser.GameState().IsMatchStarted()
-
-		if isLive {
-			message += (attacker + " damaged " + player + "(ID: " + playerID + ")" + " for " + strconv.Itoa(damage) + " with " + weapon +
-				" on round " + strconv.Itoa(parser.GameState().TotalRoundsPlayed()+1) + "\n")
+					playerTotalDamage[ph.Attacker.SteamID64] += actualDamage
+					println(ph.Attacker.Name + " damaged " + ph.Player.Name + " for " + strconv.Itoa(actualDamage) + " with " + ph.Weapon.String())
+				}
+			}
 		}
 	})
 
+	parser.RegisterEventHandler(func(pc events.PlayerConnect) {
+		playerNames[pc.Player.SteamID64] = pc.Player.Name
+	})
+
 	parser.ParseToEnd()
-	return message, err
-}
 
-func (mp *MatchProcessor) ProcessMatch(file *os.File) string {
-	message, err := mp.getMatchStats(file)
+	totalRounds := parser.GameState().TotalRoundsPlayed()
+	matchData.RoundCount = int32(totalRounds)
 
-	if err != nil {
-		println(err.Error())
-		return "error\n"
+	println(strconv.Itoa(totalRounds) + " rounds played")
+
+	var playerData []*csproto.PlayerData
+
+	for k, v := range playerTotalDamage {
+		player := &csproto.PlayerData{}
+		player.Adr = float32(v) / float32(totalRounds)
+		player.Name = playerNames[k]
+		playerData = append(playerData, player)
 	}
 
-	testMessage := &csproto.MatchInfo{}
-	testMatchData := &csproto.MatchData{}
-	testMatchData.Map = "inferno"
-	testMessage.MatchData = testMatchData
+	matchInfo.MatchData = matchData
+	matchInfo.PlayerData = playerData
+
+	return matchInfo, err
+}
+
+func (mp *MatchProcessor) ProcessMatch(file *os.File) error {
+	matchInfo, err := mp.getMatchStats(file)
+
+	if err != nil {
+		return err
+	}
 
 	request := &csproto.SaveMatchRequest{}
-	request.MatchInfo = testMessage
+	request.MatchInfo = matchInfo
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
 	mp.client.SaveMatch(ctx, request)
 
-	if err != nil {
-		panic(err)
-	}
-
 	defer file.Close()
 	defer os.Remove(file.Name())
 
-	return message
+	return nil
 }
