@@ -5,14 +5,20 @@ option go_package = "csproto";
 
 message PlayerData {
     string name = 1;
-    string steamID = 2;
+    uint64 steamID = 2;
     float adr = 3;
     int32 kills = 4;
     int32 deaths = 5;
 }
 
+message Kill {
+    uint64 killerID = 1;
+    uint64 victimID = 2;
+}
+
 message RoundData {
     int32 winningTeam = 1;
+    repeated Kill kills = 2;
 }
 
 message MatchData {

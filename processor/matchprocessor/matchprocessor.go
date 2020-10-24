@@ -45,6 +45,9 @@ func (mp *MatchProcessor) getMatchStats(file *os.File) (*csproto.MatchInfo, erro
 	var playerDeaths map[uint64]int
 	playerDeaths = make(map[uint64]int)
 
+	var roundKills map[int][]*csproto.Kill
+	roundKills = make(map[int][]*csproto.Kill)
+
 	parser.RegisterEventHandler(func(ph events.PlayerHurt) {
 		if parser.GameState().IsMatchStarted() && ph.Attacker != nil {
 			if ph.Attacker != ph.Player {
@@ -71,6 +74,11 @@ func (mp *MatchProcessor) getMatchStats(file *os.File) (*csproto.MatchInfo, erro
 		if parser.GameState().IsMatchStarted() {
 			if k.Killer != nil {
 				playerKills[k.Killer.SteamID64]++
+
+				kill := &csproto.Kill{}
+				kill.KillerID = k.Killer.SteamID64
+				kill.VictimID = k.Victim.SteamID64
+				roundKills[parser.GameState().TotalRoundsPlayed()] = append(roundKills[parser.GameState().TotalRoundsPlayed()], kill)
 			}
 			playerDeaths[k.Victim.SteamID64]++
 		}
@@ -90,6 +98,17 @@ func (mp *MatchProcessor) getMatchStats(file *os.File) (*csproto.MatchInfo, erro
 		player.Kills = int32(playerKills[k])
 		player.Deaths = int32(playerDeaths[k])
 		playerData = append(playerData, player)
+	}
+
+	matchInfo.RoundData = make([]*csproto.RoundData, totalRounds+1)
+
+	for i := 0; i <= totalRounds; i++ {
+		roundData := &csproto.RoundData{}
+
+		for _, kill := range roundKills[i] {
+			roundData.Kills = append(roundData.Kills, kill)
+		}
+		matchInfo.RoundData[i] = roundData
 	}
 
 	matchInfo.MatchData = matchData

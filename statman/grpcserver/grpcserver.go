@@ -43,6 +43,13 @@ func (gs *GRPCServer) SaveMatch(ctx context.Context, request *csproto.SaveMatchR
 		println("Deaths: " + strconv.Itoa(int(element.Deaths)))
 		println("ADR: " + strconv.FormatFloat(float64(element.Adr), 'f', 2, 32) + "\n\n\n")
 	}
+
+	for index, round := range request.MatchInfo.RoundData {
+		println("ROUND: " + strconv.Itoa(index))
+		for _, kill := range round.Kills {
+			println(strconv.FormatInt(int64(kill.KillerID), 10) + " killed " + strconv.FormatInt(int64(kill.VictimID), 10))
+		}
+	}
 	return &csproto.SaveMatchResponse{}, nil
 }
 
