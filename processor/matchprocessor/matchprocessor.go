@@ -48,6 +48,8 @@ func (mp *MatchProcessor) getMatchStats(file *os.File) (*csproto.MatchInfo, erro
 	var roundKills map[int][]*csproto.Kill
 	roundKills = make(map[int][]*csproto.Kill)
 
+	currentRound := 0
+
 	parser.RegisterEventHandler(func(ph events.PlayerHurt) {
 		if parser.GameState().IsMatchStarted() && ph.Attacker != nil {
 			if ph.Attacker != ph.Player {
@@ -66,6 +68,10 @@ func (mp *MatchProcessor) getMatchStats(file *os.File) (*csproto.MatchInfo, erro
 		}
 	})
 
+	parser.RegisterEventHandler(func(rs events.RoundStart) {
+		currentRound++
+	})
+
 	parser.RegisterEventHandler(func(pc events.PlayerConnect) {
 		playerNames[pc.Player.SteamID64] = pc.Player.Name
 	})
@@ -78,7 +84,7 @@ func (mp *MatchProcessor) getMatchStats(file *os.File) (*csproto.MatchInfo, erro
 				kill := &csproto.Kill{}
 				kill.KillerID = k.Killer.SteamID64
 				kill.VictimID = k.Victim.SteamID64
-				roundKills[parser.GameState().TotalRoundsPlayed()] = append(roundKills[parser.GameState().TotalRoundsPlayed()], kill)
+				roundKills[currentRound] = append(roundKills[currentRound], kill)
 			}
 			playerDeaths[k.Victim.SteamID64]++
 		}
