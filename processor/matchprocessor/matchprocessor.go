@@ -40,6 +40,12 @@ func (mp *MatchProcessor) getMatchStats(file *os.File) (*csproto.MatchInfo, erro
 	var playerNames map[uint64]string
 	playerNames = make(map[uint64]string)
 
+	var playerKills map[uint64]int
+	playerKills = make(map[uint64]int)
+
+	var playerDeaths map[uint64]int
+	playerDeaths = make(map[uint64]int)
+
 	parser.RegisterEventHandler(func(ph events.PlayerHurt) {
 		if parser.GameState().IsMatchStarted() && ph.Attacker != nil {
 			if ph.Attacker != ph.Player {
@@ -53,7 +59,6 @@ func (mp *MatchProcessor) getMatchStats(file *os.File) (*csproto.MatchInfo, erro
 					}
 
 					playerTotalDamage[ph.Attacker.SteamID64] += actualDamage
-					println(ph.Attacker.Name + " damaged " + ph.Player.Name + " for " + strconv.Itoa(actualDamage) + " with " + ph.Weapon.String())
 				}
 			}
 		}
@@ -63,12 +68,19 @@ func (mp *MatchProcessor) getMatchStats(file *os.File) (*csproto.MatchInfo, erro
 		playerNames[pc.Player.SteamID64] = pc.Player.Name
 	})
 
+	parser.RegisterEventHandler(func(k events.Kill) {
+		if parser.GameState().IsMatchStarted() {
+			if k.Killer != nil {
+				playerKills[k.Killer.SteamID64]++
+			}
+			playerDeaths[k.Victim.SteamID64]++
+		}
+	})
+
 	parser.ParseToEnd()
 
 	totalRounds := parser.GameState().TotalRoundsPlayed()
 	matchData.RoundCount = int32(totalRounds)
-
-	println(strconv.Itoa(totalRounds) + " rounds played")
 
 	var playerData []*csproto.PlayerData
 
@@ -76,6 +88,8 @@ func (mp *MatchProcessor) getMatchStats(file *os.File) (*csproto.MatchInfo, erro
 		player := &csproto.PlayerData{}
 		player.Adr = float32(v) / float32(totalRounds)
 		player.Name = playerNames[k]
+		player.Kills = int32(playerKills[k])
+		player.Deaths = int32(playerDeaths[k])
 		playerData = append(playerData, player)
 	}
 

@@ -38,7 +38,10 @@ func New(port string) (*GRPCServer, error) {
 func (gs *GRPCServer) SaveMatch(ctx context.Context, request *csproto.SaveMatchRequest) (*csproto.SaveMatchResponse, error) {
 	for _, element := range request.MatchInfo.PlayerData {
 
-		println(element.Name + " had an adr of: " + strconv.FormatFloat(float64(element.Adr), 'f', 2, 32))
+		println(element.Name)
+		println("Kills: " + strconv.Itoa(int(element.Kills)))
+		println("Deaths: " + strconv.Itoa(int(element.Deaths)))
+		println("ADR: " + strconv.FormatFloat(float64(element.Adr), 'f', 2, 32) + "\n\n\n")
 	}
 	return &csproto.SaveMatchResponse{}, nil
 }
