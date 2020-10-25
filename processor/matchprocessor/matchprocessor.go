@@ -3,6 +3,7 @@ package matchprocessor
 import (
 	"context"
 	dem "github.com/markus-wa/demoinfocs-golang/v2/pkg/demoinfocs"
+	common "github.com/markus-wa/demoinfocs-golang/v2/pkg/demoinfocs/common"
 	events "github.com/markus-wa/demoinfocs-golang/v2/pkg/demoinfocs/events"
 	"github.com/sethpyle376/cs-statman/pkg/csproto"
 	"google.golang.org/grpc"
@@ -39,6 +40,9 @@ func (mp *MatchProcessor) getMatchStats(file *os.File) (*csproto.MatchInfo, erro
 	var playerNames map[uint64]string
 	playerNames = make(map[uint64]string)
 
+	var playerTeams map[uint64]common.Team
+	playerTeams = make(map[uint64]common.Team)
+
 	var playerKills map[uint64]int
 	playerKills = make(map[uint64]int)
 
@@ -48,9 +52,13 @@ func (mp *MatchProcessor) getMatchStats(file *os.File) (*csproto.MatchInfo, erro
 	var roundKills map[int][]*csproto.Kill
 	roundKills = make(map[int][]*csproto.Kill)
 
+	var roundWinner map[int]common.Team
+	roundWinner = make(map[int]common.Team)
+
 	currentRound := 0
 
 	parser.RegisterEventHandler(func(ph events.PlayerHurt) {
+		playerTeams[ph.Player.SteamID64] = ph.Player.Team
 		if parser.GameState().IsMatchStarted() && ph.Attacker != nil {
 			if ph.Attacker != ph.Player {
 				if ph.Attacker.Team != ph.Player.Team {
@@ -72,8 +80,14 @@ func (mp *MatchProcessor) getMatchStats(file *os.File) (*csproto.MatchInfo, erro
 		currentRound++
 	})
 
+	parser.RegisterEventHandler(func(rs events.RoundEnd) {
+		round := parser.GameState().TotalRoundsPlayed()
+		roundWinner[round+1] = rs.Winner
+	})
+
 	parser.RegisterEventHandler(func(pc events.PlayerConnect) {
 		playerNames[pc.Player.SteamID64] = pc.Player.Name
+		playerTeams[pc.Player.SteamID64] = pc.Player.Team
 	})
 
 	parser.RegisterEventHandler(func(k events.Kill) {
@@ -101,6 +115,7 @@ func (mp *MatchProcessor) getMatchStats(file *os.File) (*csproto.MatchInfo, erro
 		player := &csproto.PlayerData{}
 		player.Adr = float32(v) / float32(totalRounds)
 		player.Name = playerNames[k]
+		player.Team = int32(playerTeams[k])
 		player.Kills = int32(playerKills[k])
 		player.Deaths = int32(playerDeaths[k])
 		playerData = append(playerData, player)
@@ -110,6 +125,7 @@ func (mp *MatchProcessor) getMatchStats(file *os.File) (*csproto.MatchInfo, erro
 
 	for i := 0; i <= totalRounds; i++ {
 		roundData := &csproto.RoundData{}
+		roundData.WinningTeam = int32(roundWinner[i])
 
 		for _, kill := range roundKills[i] {
 			roundData.Kills = append(roundData.Kills, kill)

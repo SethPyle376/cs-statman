@@ -39,6 +39,7 @@ func (gs *GRPCServer) SaveMatch(ctx context.Context, request *csproto.SaveMatchR
 	for _, element := range request.MatchInfo.PlayerData {
 
 		println(element.Name)
+		println(strconv.Itoa(int(element.Team)))
 		println("Kills: " + strconv.Itoa(int(element.Kills)))
 		println("Deaths: " + strconv.Itoa(int(element.Deaths)))
 		println("ADR: " + strconv.FormatFloat(float64(element.Adr), 'f', 2, 32) + "\n\n\n")
@@ -49,6 +50,7 @@ func (gs *GRPCServer) SaveMatch(ctx context.Context, request *csproto.SaveMatchR
 		for _, kill := range round.Kills {
 			println(strconv.FormatInt(int64(kill.KillerID), 10) + " killed " + strconv.FormatInt(int64(kill.VictimID), 10))
 		}
+		println("ROUND WON BY: " + strconv.Itoa(int(round.WinningTeam)))
 	}
 	return &csproto.SaveMatchResponse{}, nil
 }
