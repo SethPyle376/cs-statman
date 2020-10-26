@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/joho/godotenv"
 	"github.com/sethpyle376/cs-statman/statman/grpcserver"
 	"os"
 	"os/signal"
@@ -8,7 +9,18 @@ import (
 )
 
 func main() {
+
+	err := godotenv.Load()
+
+	if err != nil {
+		println(".env not found, assuming non-local environment")
+	}
+
 	gs, err := grpcserver.New("4000")
+
+	if err != nil {
+		println("ERROR: " + err.Error())
+	}
 
 	// go until told to stop
 	sigs := make(chan os.Signal, 1)

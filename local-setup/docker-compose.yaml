@@ -1,0 +1,12 @@
+version: '3'
+services:
+  psql:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=dockerUser
+      - POSTGRES_PASSWORD=dockerPassword
+      - POSTGRES_DB=statman
+    volumes:
+      - ./db-init:/docker-entrypoint-initdb.d

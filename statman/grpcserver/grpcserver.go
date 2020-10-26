@@ -3,6 +3,8 @@ package grpcserver
 import (
 	"context"
 	"github.com/sethpyle376/cs-statman/pkg/csproto"
+	"github.com/sethpyle376/cs-statman/statman/data"
+	"github.com/sethpyle376/cs-statman/statman/data/store"
 	"google.golang.org/grpc"
 	"net"
 	"strconv"
@@ -12,6 +14,7 @@ type GRPCServer struct {
 	grpcs *grpc.Server
 	csproto.UnimplementedStatmanServer
 	errChan chan error
+	db      data.Store
 }
 
 func New(port string) (*GRPCServer, error) {
@@ -26,6 +29,16 @@ func New(port string) (*GRPCServer, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	db, err := store.New("postgres")
+
+	if err != nil {
+		return nil, err
+	} else {
+		println("db connection initialized")
+	}
+
+	gs.db = db
 
 	go func() {
 		if err = gs.grpcs.Serve(lis); err != nil {
