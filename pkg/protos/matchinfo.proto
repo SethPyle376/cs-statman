@@ -23,8 +23,9 @@ message RoundData {
 }
 
 message MatchData {
-    string map = 1;
-    int32 roundCount = 2;
+    uint64 matchID = 1;
+    string map = 2;
+    int32 roundCount = 3;
 }
 
 message MatchInfo {

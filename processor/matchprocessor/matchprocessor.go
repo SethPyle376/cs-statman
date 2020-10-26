@@ -2,11 +2,14 @@ package matchprocessor
 
 import (
 	"context"
+	"crypto/md5"
+	"encoding/binary"
 	dem "github.com/markus-wa/demoinfocs-golang/v2/pkg/demoinfocs"
 	common "github.com/markus-wa/demoinfocs-golang/v2/pkg/demoinfocs/common"
 	events "github.com/markus-wa/demoinfocs-golang/v2/pkg/demoinfocs/events"
 	"github.com/sethpyle376/cs-statman/pkg/csproto"
 	"google.golang.org/grpc"
+	"io"
 	"os"
 	"time"
 )
@@ -140,6 +143,16 @@ func (mp *MatchProcessor) getMatchStats(file *os.File) (*csproto.MatchInfo, erro
 }
 
 func (mp *MatchProcessor) ProcessMatch(file *os.File) error {
+	h := md5.New()
+
+	if _, err := io.Copy(h, file); err != nil {
+		return err
+	}
+
+	hash := h.Sum(nil)
+
+	matchHash := binary.BigEndian.Uint64(hash)
+
 	matchInfo, err := mp.getMatchStats(file)
 
 	if err != nil {
@@ -148,6 +161,7 @@ func (mp *MatchProcessor) ProcessMatch(file *os.File) error {
 
 	request := &csproto.SaveMatchRequest{}
 	request.MatchInfo = matchInfo
+	request.MatchInfo.MatchData.MatchID = matchHash
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()

@@ -44,22 +44,26 @@ func New() (*PostgresStore, error) {
 	return &instance, nil
 }
 
+func (ps *PostgresStore) saveMatchData(match *csproto.MatchData) error {
+	return nil
+}
+
 func (ps *PostgresStore) SaveMatch(match *csproto.MatchInfo) error {
-	for _, element := range match.PlayerData {
+	err := ps.saveMatchData(match.GetMatchData())
 
-		println(element.Name)
-		println(strconv.Itoa(int(element.Team)))
-		println("Kills: " + strconv.Itoa(int(element.Kills)))
-		println("Deaths: " + strconv.Itoa(int(element.Deaths)))
-		println("ADR: " + strconv.FormatFloat(float64(element.Adr), 'f', 2, 32) + "\n\n\n")
+	fmt.Printf("MATCH ID: %d\n", match.GetMatchData().GetMatchID())
+
+	for _, element := range match.GetPlayerData() {
+		println("PLAYER: " + element.GetName())
+		fmt.Printf("KILLS: %d\n", element.Kills)
+		fmt.Printf("DEATHS: %d\n", element.Deaths)
+		fmt.Printf("ADR: %f\n", element.Adr)
+		fmt.Printf("\n")
 	}
 
-	for index, round := range match.RoundData {
-		println("ROUND: " + strconv.Itoa(index))
-		for _, kill := range round.Kills {
-			println(strconv.FormatInt(int64(kill.KillerID), 10) + " killed " + strconv.FormatInt(int64(kill.VictimID), 10))
-		}
-		println("ROUND WON BY: " + strconv.Itoa(int(round.WinningTeam)))
+	if err != nil {
+		return err
 	}
+
 	return nil
 }
