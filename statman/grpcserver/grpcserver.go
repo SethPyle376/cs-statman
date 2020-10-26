@@ -7,7 +7,6 @@ import (
 	"github.com/sethpyle376/cs-statman/statman/data/store"
 	"google.golang.org/grpc"
 	"net"
-	"strconv"
 )
 
 type GRPCServer struct {
@@ -49,23 +48,8 @@ func New(port string) (*GRPCServer, error) {
 }
 
 func (gs *GRPCServer) SaveMatch(ctx context.Context, request *csproto.SaveMatchRequest) (*csproto.SaveMatchResponse, error) {
-	for _, element := range request.MatchInfo.PlayerData {
-
-		println(element.Name)
-		println(strconv.Itoa(int(element.Team)))
-		println("Kills: " + strconv.Itoa(int(element.Kills)))
-		println("Deaths: " + strconv.Itoa(int(element.Deaths)))
-		println("ADR: " + strconv.FormatFloat(float64(element.Adr), 'f', 2, 32) + "\n\n\n")
-	}
-
-	for index, round := range request.MatchInfo.RoundData {
-		println("ROUND: " + strconv.Itoa(index))
-		for _, kill := range round.Kills {
-			println(strconv.FormatInt(int64(kill.KillerID), 10) + " killed " + strconv.FormatInt(int64(kill.VictimID), 10))
-		}
-		println("ROUND WON BY: " + strconv.Itoa(int(round.WinningTeam)))
-	}
-	return &csproto.SaveMatchResponse{}, nil
+	error := gs.db.SaveMatch(request.MatchInfo)
+	return &csproto.SaveMatchResponse{}, error
 }
 
 func (gs *GRPCServer) Stop() {}
