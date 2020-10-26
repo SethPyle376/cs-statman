@@ -49,6 +49,9 @@ func New(port string) (*GRPCServer, error) {
 
 func (gs *GRPCServer) SaveMatch(ctx context.Context, request *csproto.SaveMatchRequest) (*csproto.SaveMatchResponse, error) {
 	error := gs.db.SaveMatch(request.MatchInfo)
+	if error != nil {
+		println(error.Error())
+	}
 	return &csproto.SaveMatchResponse{}, error
 }
 

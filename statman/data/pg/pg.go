@@ -7,6 +7,7 @@ import (
 	"github.com/sethpyle376/cs-statman/pkg/csproto"
 	"os"
 	"strconv"
+	"time"
 )
 
 type PostgresStore struct {
@@ -45,22 +46,42 @@ func New() (*PostgresStore, error) {
 }
 
 func (ps *PostgresStore) saveMatchData(match *csproto.MatchData) error {
+	insertStatement := `
+		INSERT INTO match (id, map, date, roundCount)
+		VALUES ($1, $2, $3, $4);
+	`
+
+	_, err := ps.db.Exec(insertStatement, match.GetMatchID(), match.GetMap(), time.Now(), match.GetRoundCount())
+
+	return err
+}
+
+func (ps *PostgresStore) savePlayers(players []*csproto.PlayerData) error {
+	insertStatement := `
+		INSERT INTO player (id, name)
+		VALUES ($1, $2)
+		ON CONFLICT(id) DO UPDATE
+		SET name=EXCLUDED.name;
+	`
+	for _, player := range players {
+		_, err := ps.db.Exec(insertStatement, player.GetSteamID(), player.GetName())
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
 func (ps *PostgresStore) SaveMatch(match *csproto.MatchInfo) error {
-	err := ps.saveMatchData(match.GetMatchData())
-
 	fmt.Printf("MATCH ID: %d\n", match.GetMatchData().GetMatchID())
 
-	for _, element := range match.GetPlayerData() {
-		println("PLAYER: " + element.GetName())
-		fmt.Printf("KILLS: %d\n", element.Kills)
-		fmt.Printf("DEATHS: %d\n", element.Deaths)
-		fmt.Printf("ADR: %f\n", element.Adr)
-		fmt.Printf("\n")
+	err := ps.saveMatchData(match.GetMatchData())
+	if err != nil {
+		return err
 	}
 
+	err = ps.savePlayers(match.GetPlayerData())
 	if err != nil {
 		return err
 	}

@@ -121,6 +121,7 @@ func (mp *MatchProcessor) getMatchStats(file *os.File) (*csproto.MatchInfo, erro
 		player.Team = int32(playerTeams[k])
 		player.Kills = int32(playerKills[k])
 		player.Deaths = int32(playerDeaths[k])
+		player.SteamID = int64(k)
 		playerData = append(playerData, player)
 	}
 
@@ -161,7 +162,7 @@ func (mp *MatchProcessor) ProcessMatch(file *os.File) error {
 
 	request := &csproto.SaveMatchRequest{}
 	request.MatchInfo = matchInfo
-	request.MatchInfo.MatchData.MatchID = matchHash
+	request.MatchInfo.MatchData.MatchID = int64(matchHash)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
