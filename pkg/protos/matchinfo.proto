@@ -10,6 +10,7 @@ message PlayerData {
     float adr = 4;
     int32 kills = 5;
     int32 deaths = 6;
+    float hltv = 7;
 }
 
 message Kill {

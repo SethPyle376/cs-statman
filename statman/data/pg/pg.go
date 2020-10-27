@@ -73,6 +73,21 @@ func (ps *PostgresStore) savePlayers(players []*csproto.PlayerData) error {
 	return nil
 }
 
+func (ps *PostgresStore) savePlayerMatchData(matchID int64, players []*csproto.PlayerData) error {
+	insertStatement := `
+		INSERT INTO match_player (matchID, userID, hltv, kills, deaths, adr)
+		VALUES ($1, $2, $3, $4, $5, $6);
+	`
+
+	for _, player := range players {
+		_, err := ps.db.Exec(insertStatement, matchID, player.GetSteamID(), player.GetHltv(), player.GetKills(), player.GetDeaths(), player.GetAdr())
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func (ps *PostgresStore) SaveMatch(match *csproto.MatchInfo) error {
 	fmt.Printf("MATCH ID: %d\n", match.GetMatchData().GetMatchID())
 
@@ -82,6 +97,11 @@ func (ps *PostgresStore) SaveMatch(match *csproto.MatchInfo) error {
 	}
 
 	err = ps.savePlayers(match.GetPlayerData())
+	if err != nil {
+		return err
+	}
+
+	err = ps.savePlayerMatchData(match.GetMatchData().GetMatchID(), match.GetPlayerData())
 	if err != nil {
 		return err
 	}
