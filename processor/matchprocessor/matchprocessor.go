@@ -146,6 +146,8 @@ func (mp *MatchProcessor) getMatchStats(file *os.File) (*csproto.MatchInfo, erro
 func (mp *MatchProcessor) ProcessMatch(file *os.File) error {
 	h := md5.New()
 
+	file, err := os.Open(file.Name())
+
 	if _, err := io.Copy(h, file); err != nil {
 		return err
 	}
