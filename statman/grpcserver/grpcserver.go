@@ -2,7 +2,6 @@ package grpcserver
 
 import (
 	"context"
-	"fmt"
 	"github.com/sethpyle376/cs-statman/pkg/csproto"
 	"github.com/sethpyle376/cs-statman/statman/data"
 	"github.com/sethpyle376/cs-statman/statman/data/store"
@@ -58,20 +57,6 @@ func (gs *GRPCServer) SaveMatch(ctx context.Context, request *csproto.SaveMatchR
 
 	matchRequest := &csproto.GetMatchRequest{}
 	matchRequest.MatchID = request.GetMatchInfo().GetMatchData().GetMatchID()
-
-	response, err := gs.GetMatch(ctx, matchRequest)
-
-	if err != nil {
-		return nil, err
-	}
-
-	for _, player := range response.MatchInfo.PlayerData {
-		fmt.Printf("NAME: %s\n", player.GetName())
-		fmt.Printf("STEAMID: %d\n", player.GetSteamID())
-		fmt.Printf("Kills: %d\n", player.GetKills())
-		fmt.Printf("Deaths: %d\n", player.GetDeaths())
-		fmt.Printf("ADR: %f\n\n\n", player.GetAdr())
-	}
 
 	return &csproto.SaveMatchResponse{}, error
 }
