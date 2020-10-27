@@ -43,6 +43,24 @@ message SaveMatchResponse {
 
 }
 
+message GetPlayerMatchIDsRequest {
+    int64 playerID = 1;
+}
+
+message GetPlayerMatchIDsResponse {
+    repeated int64 matchIDs = 1;
+}
+
+message GetMatchRequest {
+    int64 matchID = 1;
+}
+
+message GetMatchResponse {
+    MatchInfo matchInfo = 1;
+}
+
 service Statman {
     rpc SaveMatch(SaveMatchRequest) returns(SaveMatchResponse){};
+    rpc GetPlayerMatchIDs(GetPlayerMatchIDsRequest) returns(GetPlayerMatchIDsResponse){};
+    rpc GetMatch(GetMatchRequest) returns(GetMatchResponse){};
 }

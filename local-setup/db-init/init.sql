@@ -14,6 +14,7 @@ CREATE TABLE match_player (
     id SERIAL PRIMARY KEY,
     matchID BIGINT NOT NULL,
     userID BIGINT NOT NULL,
+    name TEXT NOT NULL,
     hltv REAL NOT NULL,
     kills INT NOT NULL,
     deaths INT NOT NULL,
