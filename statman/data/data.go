@@ -6,4 +6,5 @@ import (
 
 type Store interface {
 	SaveMatch(match *csproto.MatchInfo) error
+	GetPlayerMatches(playerID int64) ([]int64, error)
 }

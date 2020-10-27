@@ -89,8 +89,6 @@ func (ps *PostgresStore) savePlayerMatchData(matchID int64, players []*csproto.P
 }
 
 func (ps *PostgresStore) SaveMatch(match *csproto.MatchInfo) error {
-	fmt.Printf("MATCH ID: %d\n", match.GetMatchData().GetMatchID())
-
 	err := ps.saveMatchData(match.GetMatchData())
 	if err != nil {
 		return err
@@ -107,4 +105,30 @@ func (ps *PostgresStore) SaveMatch(match *csproto.MatchInfo) error {
 	}
 
 	return nil
+}
+
+func (ps *PostgresStore) GetPlayerMatches(playerID int64) ([]int64, error) {
+	statement := `
+		select matchID from match_player where userID=$1;
+	`
+
+	rows, err := ps.db.Query(statement, playerID)
+	if err != nil {
+		return nil, nil
+	}
+	defer rows.Close()
+
+	var matchIDs []int64
+
+	for rows.Next() {
+		var matchID int64
+		err = rows.Scan(&matchID)
+		if err != nil {
+			return nil, err
+		}
+		matchIDs = append(matchIDs, matchID)
+		fmt.Printf("MATCH SET: %d\n", matchID)
+	}
+
+	return matchIDs, nil
 }
