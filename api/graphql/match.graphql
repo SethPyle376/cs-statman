@@ -1,0 +1,24 @@
+type PlayerData {
+    name: String,
+    steamID: String,
+    team: Int,
+    adr: Float,
+    kills: Int,
+    deaths: Int,
+    hltv: Float
+}
+
+type MatchData {
+    matchID: String,
+    map: String,
+    roundCount: Int
+}
+
+type MatchInfo {
+    matchData: MatchData
+    playerData: [PlayerData]
+}
+
+type Query {
+    getMatch(matchID: String) : MatchInfo
+}
