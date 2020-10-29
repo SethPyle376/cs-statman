@@ -44,7 +44,20 @@ const getUsersMatchIDs = (playerID) => {
     })
 }
 
+const getUserMatchData = (playerID) => {
+    return new Promise((resolve, reject) => {
+        client.GetPlayerMatchData({ playerID }, (err, reply) => {
+            if (err) {
+                reject(err)
+            } else {
+                resolve(reply)
+            }
+        })
+    })
+}
+
 module.exports = {
     getMatch,
-    getUsersMatchIDs
+    getUsersMatchIDs,
+    getUserMatchData
 }

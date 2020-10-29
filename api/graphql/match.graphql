@@ -23,7 +23,13 @@ type UsersMatchIDs {
     matchIDs: [String]
 }
 
+type UserMatchData {
+    matchData: MatchData,
+    playerData: PlayerData
+}
+
 type Query {
     getMatch(matchID: String) : MatchInfo
     getUsersMatches(userID: String) : UsersMatchIDs
+    getUserMatchData(userID: String) : [UserMatchData]
 }

@@ -169,3 +169,42 @@ func (ps *PostgresStore) GetPlayerMatches(playerID int64) ([]int64, error) {
 
 	return matchIDs, nil
 }
+
+func (ps *PostgresStore) GetPlayerMatchData(playerID int64) ([]*csproto.PlayerMatchData, error) {
+	statement := `
+		select md.id AS matchID, md.map AS map, md.roundCount AS roundCount,
+				mp.userID AS steamID, mp.name AS name, mp.hltv, mp.kills, mp.deaths,
+					mp.adr
+		FROM match md 
+		INNER JOIN match_player mp ON md.id=mp.matchID
+		WHERE mp.userID = $1;
+	`
+
+	rows, err := ps.db.Query(statement, playerID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	response := []*csproto.PlayerMatchData{}
+
+	for rows.Next() {
+		playerMatchData := &csproto.PlayerMatchData{}
+		matchData := &csproto.MatchData{}
+		playerData := &csproto.PlayerData{}
+
+		err = rows.Scan(&matchData.MatchID, &matchData.Map, &matchData.RoundCount,
+			&playerData.SteamID, &playerData.Name, &playerData.Hltv,
+			&playerData.Kills, &playerData.Deaths, &playerData.Adr)
+
+		if err != nil {
+			return nil, err
+		}
+		playerMatchData.MatchData = matchData
+		playerMatchData.PlayerData = playerData
+
+		response = append(response, playerMatchData)
+	}
+
+	return response, nil
+}
