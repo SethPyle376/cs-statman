@@ -165,7 +165,6 @@ func (ps *PostgresStore) GetPlayerMatches(playerID int64) ([]int64, error) {
 			return nil, err
 		}
 		matchIDs = append(matchIDs, matchID)
-		fmt.Printf("MATCH SET: %d\n", matchID)
 	}
 
 	return matchIDs, nil

@@ -24,6 +24,19 @@ const getMatch = (matchID) => {
         client.GetMatch({matchID}, (err, reply) => {
             if (err) {
                 reject(err)
+                console.error("ERROR: " + err)
+            } else {
+                resolve(reply)
+            }
+        })
+    })
+}
+
+const getUsersMatchIDs = (playerID) => {
+    return new Promise((resolve, reject) => {
+        client.GetPlayerMatchIDs({ playerID }, (err, reply) => {
+            if (err) {
+                reject(err)
             } else {
                 resolve(reply)
             }
@@ -32,5 +45,6 @@ const getMatch = (matchID) => {
 }
 
 module.exports = {
-    getMatch
+    getMatch,
+    getUsersMatchIDs
 }
