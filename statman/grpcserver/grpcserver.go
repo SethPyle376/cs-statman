@@ -85,3 +85,17 @@ func (gs *GRPCServer) GetMatch(ctx context.Context, request *csproto.GetMatchReq
 
 	return response, nil
 }
+
+func (gs *GRPCServer) GetPlayerMatchData(ctx context.Context, request *csproto.GetPlayerMatchDataRequest) (*csproto.GetPlayerMatchDataResponse, error) {
+	response := &csproto.GetPlayerMatchDataResponse{}
+
+	matchData, err := gs.db.GetPlayerMatchData(request.GetPlayerID())
+
+	if err != nil {
+		return nil, err
+	}
+
+	response.PlayerMatchData = matchData
+
+	return response, nil
+}

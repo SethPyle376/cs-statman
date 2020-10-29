@@ -1,0 +1,35 @@
+type PlayerData {
+    name: String,
+    steamID: String,
+    team: Int,
+    adr: Float,
+    kills: Int,
+    deaths: Int,
+    hltv: Float
+}
+
+type MatchData {
+    matchID: String,
+    map: String,
+    roundCount: Int
+}
+
+type MatchInfo {
+    matchData: MatchData
+    playerData: [PlayerData]
+}
+
+type UsersMatchIDs {
+    matchIDs: [String]
+}
+
+type UserMatchData {
+    matchData: MatchData,
+    playerData: PlayerData
+}
+
+type Query {
+    getMatch(matchID: String) : MatchInfo
+    getUsersMatches(userID: String) : UsersMatchIDs
+    getUserMatchData(userID: String) : [UserMatchData]
+}

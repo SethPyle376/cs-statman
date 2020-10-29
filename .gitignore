@@ -1,3 +1,5 @@
 *.dem
 go.sum
 *.pb.go
+package-lock.json
+node_modules/

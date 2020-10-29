@@ -29,6 +29,11 @@ message MatchData {
     int32 roundCount = 3;
 }
 
+message PlayerMatchData {
+    MatchData matchData = 1;
+    PlayerData playerData = 2;
+}
+
 message MatchInfo {
     MatchData matchData = 1;
     repeated RoundData roundData = 2;
@@ -59,8 +64,17 @@ message GetMatchResponse {
     MatchInfo matchInfo = 1;
 }
 
+message GetPlayerMatchDataRequest {
+    int64 playerID = 1;
+}
+
+message GetPlayerMatchDataResponse {
+    repeated PlayerMatchData playerMatchData = 1;
+}
+
 service Statman {
     rpc SaveMatch(SaveMatchRequest) returns(SaveMatchResponse){};
     rpc GetPlayerMatchIDs(GetPlayerMatchIDsRequest) returns(GetPlayerMatchIDsResponse){};
     rpc GetMatch(GetMatchRequest) returns(GetMatchResponse){};
+    rpc GetPlayerMatchData(GetPlayerMatchDataRequest) returns(GetPlayerMatchDataResponse){};
 }
