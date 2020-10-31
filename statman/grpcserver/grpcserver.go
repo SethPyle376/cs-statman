@@ -2,11 +2,12 @@ package grpcserver
 
 import (
 	"context"
+	"net"
+
 	"github.com/sethpyle376/cs-statman/pkg/csproto"
 	"github.com/sethpyle376/cs-statman/statman/data"
 	"github.com/sethpyle376/cs-statman/statman/data/store"
 	"google.golang.org/grpc"
-	"net"
 )
 
 type GRPCServer struct {

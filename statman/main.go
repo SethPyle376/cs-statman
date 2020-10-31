@@ -1,11 +1,12 @@
 package main
 
 import (
-	"github.com/joho/godotenv"
-	"github.com/sethpyle376/cs-statman/statman/grpcserver"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/joho/godotenv"
+	"github.com/sethpyle376/cs-statman/statman/grpcserver"
 )
 
 func main() {
