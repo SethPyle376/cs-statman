@@ -19,7 +19,13 @@ export default {
           yAxes: [{
             display: true,
             ticks: {
-              beginAtZero: true
+              beginAtZero: true,
+              fontColor: '#ebdbb2'
+            },
+          }],
+          xAxes: [{
+            ticks: {
+              fontColor: '#ebdbb2'
             }
           }]
         }
