@@ -1,6 +1,7 @@
 <template>
   <div>
     <v-row>
+      <PlayerOverviewCard v-if="loaded" :matchData="this.loadedData"/>
       <v-card height=500px class="mx-4 mb-16" color="#3c3836">
         <v-card-text class="primary--text">Maps Played</v-card-text>
         <MapDistributionChart v-if="loaded" :matchData="this.loadedData" />
@@ -22,6 +23,7 @@ import gql from 'graphql-tag'
 import MapDistributionChart from './charts/MapDistributionChart'
 import MapStats from './charts/MapStats'
 import AdrChart from './charts/AdrByMapChart'
+import PlayerOverviewCard from './PlayerOverviewCard'
 
 const MATCH_DATA_QUERY = gql`
   query getUserMatchData($input: String!) {
@@ -32,6 +34,7 @@ const MATCH_DATA_QUERY = gql`
           roundCount
       }
       playerData {
+          name
           steamID
           kills
           deaths
@@ -44,7 +47,8 @@ export default {
   components: {
     MapDistributionChart,
     MapStats,
-    AdrChart
+    AdrChart,
+    PlayerOverviewCard
   }, 
   data() {
     return {
