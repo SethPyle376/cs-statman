@@ -1,15 +1,15 @@
 <template>
   <div>
-    <ul>
-      <li v-for="match in this.matchData" :key="match.matchData.matchID">
-        {{ JSON.stringify(match) }}
-      </li>
-    </ul>
+    <v-card class="mx-auto my-12" max-width="400">
+      <v-card-text>Maps Played</v-card-text>
+      <MapDistributionChart v-if="loaded" :matchData="this.loadedData" />
+    </v-card>
   </div>
 </template>
 
 <script>
 import gql from 'graphql-tag'
+import MapDistributionChart from './charts/MapDistributionChart'
 
 const MATCH_DATA_QUERY = gql`
   query getUserMatchData($input: String!) {
@@ -29,9 +29,13 @@ const MATCH_DATA_QUERY = gql`
   }
 `
 export default {
+  components: {
+    MapDistributionChart
+  }, 
   data() {
     return {
-      matchData: Object
+      loadedData: {},
+      loaded: false
     }
   },
   apollo: {
@@ -43,6 +47,8 @@ export default {
         }
       },
       update(data) {
+        this.loadedData = data.getUserMatchData
+        this.loaded=true
         return data.getUserMatchData
       }
     }

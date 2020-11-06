@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import App from '../components/Layout'
+import Upload from '../components/Upload'
 
 Vue.use(VueRouter)
 
@@ -15,6 +16,11 @@ const routes = [
         component: () => import('../components/Dashboard')
       }
     ]
+  },
+  {
+  path: '/upload',
+  name: 'Upload',
+  component: Upload
   }
 ]
 
