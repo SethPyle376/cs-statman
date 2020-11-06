@@ -36,7 +36,7 @@ export default {
       labels: uniques,
       datasets: [{
           label: 'Times Played',
-          backgroundColor: ['#d79921', '#98971a', '#cc241d', '#458588', '#689d6a'],
+          backgroundColor: ['#d79921', '#98971a', '#cc241d', '#458588', '#689d6a', '#83a598', '#b16286', '#fe8019'],
           data: values
         }],
     },

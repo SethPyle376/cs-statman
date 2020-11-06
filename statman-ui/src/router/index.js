@@ -12,7 +12,7 @@ const routes = [
     component: App,
     children : [
       {
-        path: 'dashboard/:userID',
+        path: ':userID/dashboard',
         component: () => import('../components/Dashboard')
       }
     ]

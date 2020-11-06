@@ -1,13 +1,15 @@
 <template>
   <div>
-    <v-card class="mx-auto my-12" max-width="400" color="#3c3836">
-      <v-card-text class="primary--text">Maps Played</v-card-text>
-      <MapDistributionChart v-if="loaded" :matchData="this.loadedData" />
-    </v-card>
-    <v-card class="mx-auto my-12" max-width="400" color="#3c3836">
-      <v-card-text class="primary--text">Total Kills/Deaths by Map</v-card-text>
-      <MapStats v-if="loaded" :matchData="this.loadedData" />
-    </v-card>
+    <v-row>
+      <v-card class="mx-4 mb-16" max-height=500px color="#3c3836">
+        <v-card-text class="primary--text">Maps Played</v-card-text>
+        <MapDistributionChart v-if="loaded" :matchData="this.loadedData" />
+      </v-card>
+      <v-card class="mx-4 mb-16" max-height=500px color="#3c3836">
+        <v-card-text class="primary--text">Total Kills/Deaths by Map</v-card-text>
+        <MapStats v-if="loaded" :matchData="this.loadedData" />
+      </v-card>
+    </v-row>
   </div>
 </template>
 
@@ -49,7 +51,7 @@ export default {
       query: MATCH_DATA_QUERY,
       variables() {
         return {
-          input: "76561198273487074"
+          input: this.$route.params.userID
         }
       },
       update(data) {

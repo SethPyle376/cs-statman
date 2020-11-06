@@ -14,6 +14,14 @@ export default {
           labels: {
             fontColor: '#ebdbb2'
           }
+        },
+        scales: {
+          yAxes: [{
+            display: true,
+            ticks: {
+              beginAtZero: true
+            }
+          }]
         }
       }
     }
@@ -23,7 +31,6 @@ export default {
     var deathMap = {}
 
     this.matchData.forEach(match => {
-      console.log(match)
       if (!killMap[match.matchData.map]) {
         killMap[match.matchData.map] = 0
       }
