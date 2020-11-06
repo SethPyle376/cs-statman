@@ -40,8 +40,7 @@ export default {
           data: values
         }],
     },
-    this.chartOptions
-    )
+    this.chartOptions)
   }
 }
 </script>
