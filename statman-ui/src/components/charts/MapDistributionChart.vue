@@ -7,6 +7,17 @@ export default {
       type: Array
     }
   },
+  data () {
+    return {
+      chartOptions: {
+        legend: {
+          labels: {
+            fontColor: '#ebdbb2'
+          }
+        }
+      }
+    }
+  },
   mounted () {
     var maps = []
     this.matchData.forEach(match => {
@@ -23,16 +34,14 @@ export default {
     // Overwriting base render method with actual data.
     this.renderChart({
       labels: uniques,
-      datasets: [
-        {
+      datasets: [{
           label: 'Times Played',
           backgroundColor: ['#d79921', '#98971a', '#cc241d', '#458588', '#689d6a'],
           data: values
-        }
-      ],
-      backgroundColor: '#F5DEB3'
-    })
-    console.log(uniques)
+        }],
+    },
+    this.chartOptions
+    )
   }
 }
 </script>

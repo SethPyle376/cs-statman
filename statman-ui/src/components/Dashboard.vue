@@ -1,7 +1,7 @@
 <template>
   <div>
-    <v-card class="mx-auto my-12" max-width="400">
-      <v-card-text>Maps Played</v-card-text>
+    <v-card class="mx-auto my-12" max-width="400" color="#3c3836">
+      <v-card-text class="primary--text">Maps Played</v-card-text>
       <MapDistributionChart v-if="loaded" :matchData="this.loadedData" />
     </v-card>
   </div>
