@@ -20,6 +20,9 @@
         </v-list-item-content>
       </v-list-item>
       <v-list-item>
+        <v-list-item-icon>
+          <v-icon color="primary">mdi-pistol</v-icon>
+        </v-list-item-icon>
         <v-list-item-content>
           <v-list-item-title class="primary--text">
             Kills: {{ this.killCount }}
@@ -27,6 +30,9 @@
         </v-list-item-content>
       </v-list-item>
       <v-list-item>
+        <v-list-item-icon>
+          <v-icon color="primary">mdi-skull</v-icon>
+        </v-list-item-icon>
         <v-list-item-content>
           <v-list-item-title class="primary--text">
             Deaths: {{ this.deathCount }}
@@ -34,6 +40,9 @@
         </v-list-item-content>
       </v-list-item>
       <v-list-item>
+        <v-list-item-icon>
+          <v-icon color="primary">mdi-thermostat</v-icon>
+        </v-list-item-icon>
         <v-list-item-content>
           <v-list-item-title class="primary--text">
             KDR: {{ this.kdr }}
@@ -41,6 +50,9 @@
         </v-list-item-content>
       </v-list-item>
       <v-list-item>
+        <v-list-item-icon>
+          <v-icon color="primary">mdi-fire</v-icon>
+        </v-list-item-icon>
         <v-list-item-content>
           <v-list-item-title class="primary--text">
             ADR: {{ this.adr }}
