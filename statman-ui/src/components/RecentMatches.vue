@@ -1,6 +1,6 @@
 <template>
   <div style="max-height: 100%" class="overflow-y-auto">
-    <v-toolbar dark color="#3c3836">Recent Matches</v-toolbar>
+    <v-toolbar dark class="primary--text" color="#3c3836">Recent Matches</v-toolbar>
     <v-list three-line>
       <template v-for="item in this.matchData">
         <v-list-item :key="item.matchID">

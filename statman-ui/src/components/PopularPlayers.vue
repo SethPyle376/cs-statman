@@ -1,6 +1,6 @@
 <template>
   <div style="max-height: 100%" class="overflow-y-auto">
-    <v-toolbar dark color="#3c3836">Popular Players</v-toolbar>
+    <v-toolbar dark class="primary--text" color="#3c3836">Popular Players</v-toolbar>
     <v-list three-line>
       <template v-for="item in this.playerData">
         <v-list-item :key="item.userID" :to="'/app/' + item.userID + '/dashboard'">
