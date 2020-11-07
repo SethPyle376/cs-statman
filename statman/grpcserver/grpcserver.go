@@ -100,3 +100,17 @@ func (gs *GRPCServer) GetPlayerMatchData(ctx context.Context, request *csproto.G
 
 	return response, nil
 }
+
+func (gs *GRPCServer) GetRecentMatches(ctx context.Context, request *csproto.GetRecentMatchesRequest) (*csproto.GetRecentMatchesResponse, error) {
+	response := &csproto.GetRecentMatchesResponse{}
+
+	matchData, err := gs.db.GetRecentMatches()
+
+	if err != nil {
+		return nil, err
+	}
+
+	response.MatchData = matchData
+
+	return response, nil
+}

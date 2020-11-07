@@ -11,7 +11,8 @@ type PlayerData {
 type MatchData {
     matchID: String,
     map: String,
-    roundCount: Int
+    roundCount: Int,
+    date: String
 }
 
 type MatchInfo {
@@ -30,6 +31,7 @@ type UserMatchData {
 
 type Query {
     getMatch(matchID: String) : MatchInfo
+    getRecentMatches : [MatchData]
     getUsersMatches(userID: String) : UsersMatchIDs
     getUserMatchData(userID: String) : [UserMatchData]
 }

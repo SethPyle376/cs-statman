@@ -1,4 +1,4 @@
-const { getMatch, getUsersMatchIDs, getUserMatchData } = require('./../lib/StatmanClient')
+const { getMatch, getUsersMatchIDs, getUserMatchData, getRecentMatches } = require('./../lib/StatmanClient')
 
 module.exports.resolvers = {
     Query: {
@@ -19,6 +19,10 @@ module.exports.resolvers = {
         getUserMatchData: async (parent, args, context, info) => {
             const matchData = await getUserMatchData(args.userID)
             return matchData.playerMatchData
+        },
+        getRecentMatches: async (parent, args, context, info) => {
+            const matchData = await getRecentMatches()
+            return matchData.matchData
         }
     }
 }

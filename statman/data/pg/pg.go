@@ -3,11 +3,12 @@ package pg
 import (
 	"database/sql"
 	"fmt"
-	_ "github.com/lib/pq"
-	"github.com/sethpyle376/cs-statman/pkg/csproto"
 	"os"
 	"strconv"
 	"time"
+
+	_ "github.com/lib/pq"
+	"github.com/sethpyle376/cs-statman/pkg/csproto"
 )
 
 type PostgresStore struct {
@@ -207,4 +208,30 @@ func (ps *PostgresStore) GetPlayerMatchData(playerID int64) ([]*csproto.PlayerMa
 	}
 
 	return response, nil
+}
+
+func (ps *PostgresStore) GetRecentMatches() ([]*csproto.MatchData, error) {
+	matchDataArray := []*csproto.MatchData{}
+
+	statement := `
+		select * FROM match ORDER BY date DESC LIMIT 10;
+	`
+
+	matches, err := ps.db.Query(statement)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer matches.Close()
+
+	for matches.Next() {
+		matchData := &csproto.MatchData{}
+
+		matches.Scan(&matchData.MatchID, &matchData.Map, &matchData.Date, &matchData.RoundCount)
+
+		matchDataArray = append(matchDataArray, matchData)
+	}
+
+	return matchDataArray, nil
 }
