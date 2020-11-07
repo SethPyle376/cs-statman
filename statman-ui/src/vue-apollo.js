@@ -7,7 +7,7 @@ Vue.use(VueApollo)
 
 const AUTH_TOKEN = 'DAYLY_TOKEN'
 
-const httpEndpoint = process.env.VUE_APP_API_ENDPOINT
+const httpEndpoint = process.env.VUE_APP_API_ENDPOINT || 'http://localhost:8082/graphql'
 
 const defaultOptions = {
   // You can use `https` for secure connection (recommended in production)

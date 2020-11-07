@@ -35,7 +35,11 @@ export default {
   },
   methods: {
     getPlayers: function() {
-      this.$apollo.query({ query: POPULAR_PLAYERS_QUERY}).then(data => this.playerData = data.data.getPopularPlayers)
+      try {
+        this.$apollo.query({ query: POPULAR_PLAYERS_QUERY}).then(data => this.playerData = data.data.getPopularPlayers).catch(error => console.log(error))
+      } catch (error) {
+        console.log(error)
+      }
     }
   },
   created: function () {
