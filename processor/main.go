@@ -3,13 +3,22 @@ package main
 import (
 	// "fmt"
 
-	"github.com/sethpyle376/cs-statman/processor/uploadserver"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/joho/godotenv"
+	"github.com/sethpyle376/cs-statman/processor/uploadserver"
 )
 
 func main() {
+
+	err := godotenv.Load()
+
+	if err != nil {
+		println(".env not found, assuming non-local environment")
+	}
+
 	us, err := uploadserver.New()
 
 	go us.Start()

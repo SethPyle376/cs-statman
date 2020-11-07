@@ -4,14 +4,16 @@ import (
 	"context"
 	"crypto/md5"
 	"encoding/binary"
+	"io"
+	"os"
+	"time"
+
 	dem "github.com/markus-wa/demoinfocs-golang/v2/pkg/demoinfocs"
 	common "github.com/markus-wa/demoinfocs-golang/v2/pkg/demoinfocs/common"
 	events "github.com/markus-wa/demoinfocs-golang/v2/pkg/demoinfocs/events"
 	"github.com/sethpyle376/cs-statman/pkg/csproto"
 	"google.golang.org/grpc"
-	"io"
-	"os"
-	"time"
+	credentials "google.golang.org/grpc/credentials"
 )
 
 type MatchProcessor struct {
@@ -20,10 +22,29 @@ type MatchProcessor struct {
 
 func New() (*MatchProcessor, error) {
 	mp := &MatchProcessor{}
-	conn, err := grpc.Dial("localhost:4000", grpc.WithInsecure())
-	client := csproto.NewStatmanClient(conn)
+
+	var grpcConn *grpc.ClientConn
+
+	cert, ok := os.LookupEnv("TLS_CERT_LOCATION")
+
+	var err error
+
+	if !ok {
+		grpcConn, err = grpc.Dial("localhost:4000", grpc.WithInsecure())
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		grpcOpt, err := credentials.NewClientTLSFromFile(cert, "")
+		if err != nil {
+			return nil, err
+		}
+		grpcConn, err = grpc.Dial("localhost:4000", grpc.WithTransportCredentials(grpcOpt))
+	}
+
+	client := csproto.NewStatmanClient(grpcConn)
 	mp.client = client
-	return mp, err
+	return mp, nil
 }
 
 func (mp *MatchProcessor) getMatchStats(file *os.File) (*csproto.MatchInfo, error) {

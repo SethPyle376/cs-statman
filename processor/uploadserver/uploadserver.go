@@ -16,6 +16,9 @@ type UploadServer struct {
 func New() (*UploadServer, error) {
 	us := &UploadServer{}
 	mp, err := matchprocessor.New()
+	if err != nil {
+		panic(err)
+	}
 	us.mp = mp
 	return us, err
 }
@@ -59,6 +62,8 @@ func (us *UploadServer) handleUpload(w http.ResponseWriter, r *http.Request) {
 	err = us.mp.ProcessMatch(tempfile)
 	if err != nil {
 		panic("error processing match")
+	} else {
+		println("PROCESSED MATCH")
 	}
 }
 
