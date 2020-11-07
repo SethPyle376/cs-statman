@@ -29,8 +29,14 @@ func New() (*MatchProcessor, error) {
 
 	var err error
 
+	host, hostOk := os.LookupEnv("STATMAN_HOST")
+
+	if !hostOk {
+		host = "localhost:4000"
+	}
+
 	if !ok {
-		grpcConn, err = grpc.Dial("localhost:4000", grpc.WithInsecure())
+		grpcConn, err = grpc.Dial(host, grpc.WithInsecure())
 		if err != nil {
 			return nil, err
 		}
@@ -39,7 +45,7 @@ func New() (*MatchProcessor, error) {
 		if err != nil {
 			return nil, err
 		}
-		grpcConn, err = grpc.Dial("localhost:4000", grpc.WithTransportCredentials(grpcOpt))
+		grpcConn, err = grpc.Dial(host, grpc.WithTransportCredentials(grpcOpt))
 	}
 
 	client := csproto.NewStatmanClient(grpcConn)

@@ -10,3 +10,38 @@ services:
       - POSTGRES_DB=statman
     volumes:
       - ./db-init:/docker-entrypoint-initdb.d
+  processor:
+    image: statman-processor
+    ports:
+      - "8081:8081"
+    depends_on:
+      - statman
+    environment:
+      - STATMAN_HOST=statman:4000
+  statman:
+    image: statman
+    ports:
+      - "4000:4000"
+    depends_on:
+      - psql
+    environment:
+      - PG_HOST=psql
+      - PG_PORT=5432
+      - PG_USER=dockerUser
+      - PG_PASSWORD=dockerPassword
+      - PG_DB_NAME=statman
+      - PG_SSL_MODE=disable
+  statman-api:
+    image: statman-api
+    ports:
+      - "8082:8082"
+    depends_on:
+      - processor
+    environment:
+      - PORT=8082
+      - STATMAN_HOST=statman
+      - STATMAN_PORT=4000
+  statman-ui:
+    image: statman-ui
+    ports:
+      - "8080:80"

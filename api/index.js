@@ -27,4 +27,4 @@ app.use(cors(),
     })
 )
 
-app.listen(8082)
+app.listen(process.env.PORT || 8082)

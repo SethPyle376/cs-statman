@@ -1,0 +1,101 @@
+syntax = "proto3";
+
+package statman;
+option go_package = "csproto";
+
+message PlayerData {
+    string name = 1;
+    int64 steamID = 2;
+    int32 team = 3;
+    float adr = 4;
+    int32 kills = 5;
+    int32 deaths = 6;
+    float hltv = 7;
+}
+
+message Kill {
+    uint64 killerID = 1;
+    uint64 victimID = 2;
+}
+
+message RoundData {
+    int32 winningTeam = 1;
+    repeated Kill kills = 2;
+}
+
+message MatchData {
+    int64 matchID = 1;
+    string map = 2;
+    int32 roundCount = 3;
+    string date = 4;
+}
+
+message PlayerMatchData {
+    MatchData matchData = 1;
+    PlayerData playerData = 2;
+}
+
+message MatchInfo {
+    MatchData matchData = 1;
+    repeated RoundData roundData = 2;
+    repeated PlayerData playerData = 3;
+}
+
+message PopularPlayerData {
+    int64 userID = 1;
+    int32 count = 2;
+    string name = 3;
+}
+
+message SaveMatchRequest {
+    MatchInfo matchInfo = 1;
+}
+
+message SaveMatchResponse {
+
+}
+
+message GetPlayerMatchIDsRequest {
+    int64 playerID = 1;
+}
+
+message GetPlayerMatchIDsResponse {
+    repeated int64 matchIDs = 1;
+}
+
+message GetMatchRequest {
+    int64 matchID = 1;
+}
+
+message GetMatchResponse {
+    MatchInfo matchInfo = 1;
+}
+
+message GetPlayerMatchDataRequest {
+    int64 playerID = 1;
+}
+
+message GetPlayerMatchDataResponse {
+    repeated PlayerMatchData playerMatchData = 1;
+}
+
+message GetRecentMatchesRequest {}
+
+message GetRecentMatchesResponse {
+    repeated MatchData matchData = 1;
+}
+
+message GetPopularPlayersRequest {}
+
+message GetPopularPlayersResponse {
+    repeated PopularPlayerData popularPlayerData = 1;
+}
+
+service Statman {
+    rpc SaveMatch(SaveMatchRequest) returns(SaveMatchResponse){};
+    rpc GetPlayerMatchIDs(GetPlayerMatchIDsRequest) returns(GetPlayerMatchIDsResponse){};
+    rpc GetMatch(GetMatchRequest) returns(GetMatchResponse){};
+    rpc GetRecentMatches(GetRecentMatchesRequest) returns(GetRecentMatchesResponse){};
+    rpc GetPlayerMatchData(GetPlayerMatchDataRequest) returns(GetPlayerMatchDataResponse){};
+    rpc GetPopularPlayers(GetPopularPlayersRequest) returns(GetPopularPlayersResponse){};
+}

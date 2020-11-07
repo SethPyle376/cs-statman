@@ -2,7 +2,7 @@ const fs = require('fs')
 const grpc = require('grpc');
 const protoLoader = require('@grpc/proto-loader')
 
-const PROTO_PATH = __dirname + './../../pkg/protos/matchinfo.proto'
+const PROTO_PATH = __dirname + '/../protos/matchinfo.proto'
 
 var packageDefinition = protoLoader.loadSync(PROTO_PATH, 
     {
