@@ -4,6 +4,7 @@ const express = require('express')
 const { graphqlHTTP } = require('express-graphql')
 const { merge } = require('lodash')
 const cors = require('cors')
+require('dotenv').config()
 
 const {resolvers: MatchResolvers} = require('./resolvers/MatchResolvers')
 

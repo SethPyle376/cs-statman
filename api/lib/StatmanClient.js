@@ -1,3 +1,4 @@
+const fs = require('fs')
 const grpc = require('grpc');
 const protoLoader = require('@grpc/proto-loader')
 
@@ -17,7 +18,22 @@ var protoDescriptor = grpc.loadPackageDefinition(packageDefinition)
 // The protoDescriptor object has the full package hierarchy
 var statman = grpc.loadPackageDefinition(packageDefinition).statman
 
-var client = new statman.Statman('localhost:4000', grpc.credentials.createInsecure());
+const grpc_host = process.env.STATMAN_HOST || 'localhost'
+const grpc_port = process.env.STATMAN_PORT || '4000'
+
+var ssl_creds = {}
+
+if (process.env.SECURE_GRPC === 'true') {
+    ssl_creds = grpc.credentials.createSsl(
+        fs.readFileSync(process.env.TLS_CA_CERT),
+        fs.readFileSync(process.env.TLS_CLIENT_KEY),
+        fs.readFileSync(process.env.TLS_CLIENT_CERT)
+    )
+} else {
+    ssl_creds = grpc.credentials.createInsecure()
+}
+
+var client = new statman.Statman(`${grpc_host}:${grpc_port}`, ssl_creds);
 
 const getMatch = (matchID) => {
     return new Promise((resolve, reject) => {
@@ -72,6 +88,7 @@ const getPopularPlayers = () => {
     return new Promise((resolve, reject) => {
         client.getPopularPlayers({}, (err, reply) => {
             if (err) {
+                console.log(err)
                 reject (err)
             } else {
                 resolve(reply)

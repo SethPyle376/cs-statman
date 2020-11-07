@@ -2,9 +2,11 @@ package uploadserver
 
 import (
 	"fmt"
-	"github.com/sethpyle376/cs-statman/processor/matchprocessor"
 	"io/ioutil"
 	"net/http"
+	"os"
+
+	"github.com/sethpyle376/cs-statman/processor/matchprocessor"
 )
 
 type UploadServer struct {
@@ -62,7 +64,13 @@ func (us *UploadServer) handleUpload(w http.ResponseWriter, r *http.Request) {
 
 func (us *UploadServer) Start() {
 	http.HandleFunc("/upload", us.handleUpload)
-	http.ListenAndServe(":8081", nil)
+	uploadPort, ok := os.LookupEnv("UPLOAD_PORT")
+
+	if !ok {
+		uploadPort = "8081"
+	}
+
+	http.ListenAndServe(":"+uploadPort, nil)
 }
 
 func (us *UploadServer) Stop() { /* TODO */ }

@@ -3,3 +3,6 @@ go.sum
 *.pb.go
 package-lock.json
 node_modules/
+test_certs/*.key
+test_certs/*.csr
+test_certs/*.crt

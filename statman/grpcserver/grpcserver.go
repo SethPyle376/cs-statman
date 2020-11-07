@@ -3,11 +3,13 @@ package grpcserver
 import (
 	"context"
 	"net"
+	"os"
 
 	"github.com/sethpyle376/cs-statman/pkg/csproto"
 	"github.com/sethpyle376/cs-statman/statman/data"
 	"github.com/sethpyle376/cs-statman/statman/data/store"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 )
 
 type GRPCServer struct {
@@ -18,13 +20,36 @@ type GRPCServer struct {
 }
 
 func New(port string) (*GRPCServer, error) {
+
+	var grpcServer *grpc.Server
+
+	cert, ok := os.LookupEnv("TLS_CERT_LOCATION")
+	keyFile, keyOk := os.LookupEnv("TLS_KEY_LOCATION")
+
+	if !ok || !keyOk {
+		grpcServer = grpc.NewServer()
+	} else {
+		creds, err := credentials.NewServerTLSFromFile(cert, keyFile)
+		if err != nil {
+			return nil, err
+		}
+		println(creds.Info().ProtocolVersion)
+		grpcServer = grpc.NewServer(grpc.Creds(creds))
+	}
+
 	gs := &GRPCServer{
-		grpcs: grpc.NewServer(),
+		grpcs: grpcServer,
 	}
 
 	csproto.RegisterStatmanServer(gs.grpcs, gs)
 
-	lis, err := net.Listen("tcp", ":4000")
+	grpcPort, ok := os.LookupEnv("GRPC_PORT")
+
+	if !ok {
+		grpcPort = "4000"
+	}
+
+	lis, err := net.Listen("tcp", ":"+grpcPort)
 
 	if err != nil {
 		return nil, err
