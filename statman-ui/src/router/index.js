@@ -14,6 +14,10 @@ const routes = [
       {
         path: ':userID/dashboard',
         component: () => import('../components/Dashboard')
+      },
+      {
+        path: 'home',
+        component: () => import('../components/Home')
       }
     ]
   },
