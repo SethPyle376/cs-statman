@@ -18,13 +18,12 @@ const routes = [
       {
         path: 'home',
         component: () => import('../components/Home')
+      },
+      {
+        path: 'upload',
+        component: Upload
       }
     ]
-  },
-  {
-  path: '/upload',
-  name: 'Upload',
-  component: Upload
   }
 ]
 

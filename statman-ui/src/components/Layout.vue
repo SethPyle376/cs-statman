@@ -6,7 +6,17 @@
     </v-app-bar>
     <v-navigation-drawer v-model="drawer" app clipped>
       <v-list dense nav color="3c3836">
-        <v-list-item to="/upload">
+        <v-list-item to="/app/home">
+          <v-list-item-icon>
+            <v-icon color="primary">mdi-home</v-icon>
+          </v-list-item-icon>
+          <v-list-item-content>
+            <v-list-item-title class="primary--text">
+              Home
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item to="/app/upload">
           <v-list-item-icon>
             <v-icon color="primary">mdi-cloud-upload</v-icon>
           </v-list-item-icon>
