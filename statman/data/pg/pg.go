@@ -235,3 +235,29 @@ func (ps *PostgresStore) GetRecentMatches() ([]*csproto.MatchData, error) {
 
 	return matchDataArray, nil
 }
+
+func (ps *PostgresStore) GetPopularPlayers() ([]*csproto.PopularPlayerData, error) {
+	popularPlayerArray := []*csproto.PopularPlayerData{}
+
+	statement := `
+		select userid, COUNT(userid), name from match_player group by userid, name order by COUNT(userid) DESC LIMIT 15;
+	`
+
+	players, err := ps.db.Query(statement)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer players.Close()
+
+	for players.Next() {
+		playerData := &csproto.PopularPlayerData{}
+
+		players.Scan(&playerData.UserID, &playerData.Count, &playerData.Name)
+
+		popularPlayerArray = append(popularPlayerArray, playerData)
+	}
+
+	return popularPlayerArray, nil
+}

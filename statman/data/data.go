@@ -9,5 +9,6 @@ type Store interface {
 	GetPlayerMatches(playerID int64) ([]int64, error)
 	GetMatch(matchID int64) (*csproto.MatchInfo, error)
 	GetRecentMatches() ([]*csproto.MatchData, error)
+	GetPopularPlayers() ([]*csproto.PopularPlayerData, error)
 	GetPlayerMatchData(playerID int64) ([]*csproto.PlayerMatchData, error)
 }

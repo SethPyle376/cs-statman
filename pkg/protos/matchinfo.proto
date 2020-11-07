@@ -41,6 +41,12 @@ message MatchInfo {
     repeated PlayerData playerData = 3;
 }
 
+message PopularPlayerData {
+    int64 userID = 1;
+    int32 count = 2;
+    string name = 3;
+}
+
 message SaveMatchRequest {
     MatchInfo matchInfo = 1;
 }
@@ -79,10 +85,17 @@ message GetRecentMatchesResponse {
     repeated MatchData matchData = 1;
 }
 
+message GetPopularPlayersRequest {}
+
+message GetPopularPlayersResponse {
+    repeated PopularPlayerData popularPlayerData = 1;
+}
+
 service Statman {
     rpc SaveMatch(SaveMatchRequest) returns(SaveMatchResponse){};
     rpc GetPlayerMatchIDs(GetPlayerMatchIDsRequest) returns(GetPlayerMatchIDsResponse){};
     rpc GetMatch(GetMatchRequest) returns(GetMatchResponse){};
     rpc GetRecentMatches(GetRecentMatchesRequest) returns(GetRecentMatchesResponse){};
     rpc GetPlayerMatchData(GetPlayerMatchDataRequest) returns(GetPlayerMatchDataResponse){};
+    rpc GetPopularPlayers(GetPopularPlayersRequest) returns(GetPopularPlayersResponse){};
 }

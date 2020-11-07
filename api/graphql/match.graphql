@@ -29,9 +29,16 @@ type UserMatchData {
     playerData: PlayerData
 }
 
+type PopularPlayerData {
+    userID: String,
+    count: Int,
+    name: String
+}
+
 type Query {
     getMatch(matchID: String) : MatchInfo
     getRecentMatches : [MatchData]
+    getPopularPlayers: [PopularPlayerData]
     getUsersMatches(userID: String) : UsersMatchIDs
     getUserMatchData(userID: String) : [UserMatchData]
 }

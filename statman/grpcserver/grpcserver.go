@@ -114,3 +114,17 @@ func (gs *GRPCServer) GetRecentMatches(ctx context.Context, request *csproto.Get
 
 	return response, nil
 }
+
+func (gs *GRPCServer) GetPopularPlayers(ctx context.Context, request *csproto.GetPopularPlayersRequest) (*csproto.GetPopularPlayersResponse, error) {
+	response := &csproto.GetPopularPlayersResponse{}
+
+	playerData, err := gs.db.GetPopularPlayers()
+
+	if err != nil {
+		return nil, err
+	}
+
+	response.PopularPlayerData = playerData
+
+	return response, nil
+}

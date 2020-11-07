@@ -68,9 +68,22 @@ const getRecentMatches = () => {
     })
 }
 
+const getPopularPlayers = () => {
+    return new Promise((resolve, reject) => {
+        client.getPopularPlayers({}, (err, reply) => {
+            if (err) {
+                reject (err)
+            } else {
+                resolve(reply)
+            }
+        })
+    })
+}
+
 module.exports = {
     getMatch,
     getUsersMatchIDs,
     getUserMatchData,
-    getRecentMatches
+    getRecentMatches,
+    getPopularPlayers
 }
