@@ -11,7 +11,7 @@ RUN go get google.golang.org/grpc/cmd/protoc-gen-go-grpc
 RUN cp /go/bin/protoc-gen-go /usr/bin
 RUN cp /go/bin/protoc-gen-go-grpc /usr/bin
 
-RUN if [ ! -d "/go/src/github.com/sethpyle376/cs-statman/pkg/csproto"]; then mkdir /go/src/github.com/sethpyle376/cs-statman/pkg/csproto; fi
+if [ ! -d "/go/src/github.com/sethpyle376/cs-statman/pkg/csproto" ]; then mkdir /go/src/github.com/sethpyle376/cs-statman/pkg/csproto; fi;
 RUN protoc -I /go/src/github.com/sethpyle376/cs-statman/pkg/protos /go/src/github.com/sethpyle376/cs-statman/pkg/protos/*.proto --go-grpc_out=/go/src/github.com/sethpyle376/cs-statman/pkg/csproto --go_out=/go/src/github.com/sethpyle376/cs-statman/pkg/csproto
 
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags "-s" -a -installsuffix cgo -o processor
