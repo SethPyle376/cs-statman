@@ -48,7 +48,8 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           # relative path to the place where source code with Dockerfile is located
-          context: ./processor
+          context: .
+          file: processor/Dockerfile
           # Note: tags has to be all lower-case
           tags: |
             sethpyle/statman-processor:latest
