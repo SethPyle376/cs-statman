@@ -4,7 +4,7 @@ ADD . /go/src/github.com/sethpyle376/cs-statman
 
 WORKDIR /go/src/github.com/sethpyle376/cs-statman/processor
 
-RUN apk add --no-cache ca-certificates protobuf
+RUN apk add --no-cache ca-certificates protobuf git
 
 RUN go get -u github.com/golang/protobuf/protoc-gen-go
 RUN go install google.golang.org/grpc/cmd/protoc-gen-go-grpc
