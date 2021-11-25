@@ -7,7 +7,7 @@ WORKDIR /go/src/github.com/sethpyle376/cs-statman/processor
 RUN apk add --no-cache ca-certificates protobuf git
 
 RUN go get -u github.com/golang/protobuf/protoc-gen-go
-RUN go install google.golang.org/grpc/cmd/protoc-gen-go-grpc
+RUN go get google.golang.org/grpc/cmd/protoc-gen-go-grpc
 RUN cp /go/bin/protoc-gen-go /usr/bin
 RUN cp /go/bin/protoc-gen-go-grpc /usr/bin
 
