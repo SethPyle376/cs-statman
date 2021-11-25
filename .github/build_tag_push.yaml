@@ -1,0 +1,58 @@
+name: Build and Publish
+
+on:
+  # run it on push to the default repository branch
+  push:
+    branches: [master]
+  # run it during pull request
+  pull_request:
+
+jobs:
+  # define job to build and publish docker image
+  build-and-push-docker-image:
+    name: Build Docker image and push to repositories
+    # run only when code is compiling and tests are passing
+    runs-on: ubuntu-latest
+
+    # steps to perform in job
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v1
+      
+      - name: Setup Protos
+        run: |
+          if [ ! -d "pkg/csproto" ]; then mkdir pkg/csproto; fi && protoc -I ./pkg/protos ./pkg/protos/*.proto --go-grpc_out=./pkg/csproto --go_out=./pkg/csproto
+          cp pkg/protos/*.proto api/protos/
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      # setup Docker buld action
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      
+      - name: Build/Push Processor
+        uses: docker/build-push-action@v2
+        with:
+          # relative path to the place where source code with Dockerfile is located
+          context: ./processor
+          # Note: tags has to be all lower-case
+          tags: |
+            sethpyle/statman-processor:latest
+            sethpyle/statman-processor:1.0.0
+          # build on feature branches, push only on master branch
+          push: ${{ github.ref == 'refs/heads/master' }}
+          platforms: linux/amd64, linux/arm64
+
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
