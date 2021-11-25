@@ -24,6 +24,9 @@ jobs:
       
       - name: Setup Protos
         run: |
+          go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.26
+          go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.1
+          export PATH="$PATH:$(go env GOPATH)/bin"
           if [ ! -d "pkg/csproto" ]; then mkdir pkg/csproto; fi && protoc -I ./pkg/protos ./pkg/protos/*.proto --go-grpc_out=./pkg/csproto --go_out=./pkg/csproto
           cp pkg/protos/*.proto api/protos/
 
