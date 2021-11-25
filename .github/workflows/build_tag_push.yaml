@@ -22,13 +22,13 @@ jobs:
       - name: Install Protoc
         uses: arduino/setup-protoc@v1
       
-      - name: Setup Protos
-        run: |
-          go get google.golang.org/protobuf/cmd/protoc-gen-go@v1.26
-          go get google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.1
-          export PATH="$PATH:$(go env GOPATH)/bin"
-          if [ ! -d "pkg/csproto" ]; then mkdir pkg/csproto; fi && protoc -I ./pkg/protos ./pkg/protos/*.proto --go-grpc_out=./pkg/csproto --go_out=./pkg/csproto
-          cp pkg/protos/*.proto api/protos/
+      # - name: Setup Protos
+      #   run: |
+      #     go get google.golang.org/protobuf/cmd/protoc-gen-go@v1.26
+      #     go get google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.1
+      #     export PATH="$PATH:$(go env GOPATH)/bin"
+      #     if [ ! -d "pkg/csproto" ]; then mkdir pkg/csproto; fi && protoc -I ./pkg/protos ./pkg/protos/*.proto --go-grpc_out=./pkg/csproto --go_out=./pkg/csproto
+      #     cp pkg/protos/*.proto api/protos/
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
